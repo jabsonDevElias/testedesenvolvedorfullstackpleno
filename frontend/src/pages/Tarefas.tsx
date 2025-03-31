@@ -14,23 +14,23 @@ function App() {
 
     useEffect(() => {
         axios.post('http://localhost:5000/api/listartarefas')
-          .then(response => {
-            setData(response.data);
+            .then(response => {
+                setData(response.data);
 
-            const dadosFormatados = response.data.map((item:any) => [
-                item.nome,
-                item.descricao,
-                item.status
-            ]);
+                const dadosFormatados = response.data.map((item: any) => [
+                    item.nome,
+                    item.descricao,
+                    "<span class='badge text-bg-secondary'>"+item.status+"</span>"
+                ]);
 
-            setTableData(dadosFormatados);
-          })
-          .catch(error => {
-            console.error('Erro ao buscar dados da API:', error);
-          });
-      }, []);
+                setTableData(dadosFormatados);
+            })
+            .catch(error => {
+                console.error('Erro ao buscar dados da API:', error);
+            });
+    }, []);
 
-      console.log(data);
+    console.log(data);
 
     const options = {
         language: {
@@ -62,10 +62,7 @@ function App() {
 
     return (
         <div className="col-12 d-flex justify-content-between p-2">
-            <div className="col-6">
-                <h1>Teste</h1>
-            </div>
-            <div className="col-6  rounded-3">
+            <div className="col-10  rounded-3 m-auto">
                 <DataTable
                     data={tableData}
                     columns={[
