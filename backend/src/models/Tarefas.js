@@ -9,13 +9,11 @@ const Tarefas = sequelize.define("Tarefas", {
   },
   nome: {
     type: DataTypes.STRING,
-    allowNull: false,
-    unique: false,
+    allowNull: false
   },
   descricao: {
     type: DataTypes.STRING,
-    allowNull: false,
-    unique: false,
+    allowNull: false
   },
   idUser:{
     type: DataTypes.INTEGER,

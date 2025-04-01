@@ -1,68 +1,77 @@
-
-
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 interface LoginForm {
-    email: string;
-    password: string;
+  email: string;
+  password: string;
 }
 
-
-function Login() {
-
-  const { register, handleSubmit, formState: { errors } } = useForm<LoginForm>();
+const Login: React.FC = () => {
+  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<LoginForm>();
   const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
-    
     const token = localStorage.getItem("authToken");
     if (token) {
-      navigate("/");
+      navigate("/home");
     }
-
   }, [navigate]);
 
   const onSubmit = async (data: LoginForm) => {
     try {
       const response = await axios.post("http://localhost:5000/api/login", data);
       const token = response.data.token;
-      
-      localStorage.setItem("authToken", token);
-      navigate("/tarefas");
+
+      if (token) {
+        localStorage.setItem("authToken", token);
+        navigate("/home");
+      }
     } catch (error) {
-      console.error("Erro ao fazer login:", error);
-      alert("Credenciais inválidas");
+      setErrorMessage("E-mail ou senha inválidos!");
     }
   };
 
   return (
-    <>
-      <form onSubmit={handleSubmit(onSubmit)} className="col-12 col-md-10 m-auto d-flex justify-content-end">
-        <div className="col-6 text-start">
-          <h1>Login</h1>
-          <div className="col-12">
-            <input type="text" className="form-control"  placeholder="Usuário"
+    <div className="container">
+      <form onSubmit={handleSubmit(onSubmit)} className="col-md-6 mx-auto">
+        <h1 className="text-center">Login</h1>
+
+        {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
+
+        <div className="mb-3">
+          <input
+            type="email"
+            className="form-control"
+            placeholder="E-mail"
             {...register("email", { required: "O e-mail é obrigatório" })}
-            />
-          </div>
-          <div className="col-12 mt-1">
-            <input type="password" className="form-control" placeholder="Senha"
+          />
+          {errors.email && <p className="text-danger">{errors.email.message}</p>}
+        </div>
+
+        <div className="mb-3">
+          <input
+            type="password"
+            className="form-control"
+            placeholder="Senha"
             {...register("password", { required: "A senha é obrigatória" })}
-            />
-          </div>
-          <div className="col-12 mt-1">
-            <a href='/cadastrausuario'>Cadastre-se</a>
-          </div>
-          <div className="col-12 mt-1">
-            <button type="submit" className='btn btn-primary'>ACESSAR</button>
-          </div>
+          />
+          {errors.password && <p className="text-danger">{errors.password.message}</p>}
+        </div>
+       
+       <div className="col-12">
+         <a href="/cadastrausuario">Cadastrar Usuário</a>
+       </div>
+        <div className="text-center">
+          <button type="submit" className="btn btn-primary w-100" disabled={isSubmitting}>
+            {isSubmitting ? "Aguarde..." : "Entrar"}
+          </button>
         </div>
       </form>
-    </>
-  )
-}
+    </div>
+  );
+};
 
-export default Login
+export default Login;

@@ -10,6 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.7.2",
+    "@fortawesome/free-solid-svg-icons": "^6.7.2",
+    "@fortawesome/react-fontawesome": "^0.2.2",
     "@types/datatables.net": "^1.12.3",
     "axios": "^1.8.4",
     "bootstrap": "^5.3.3",
@@ -21,6 +24,7 @@
     "datatables.net-select-dt": "^3.0.0",
     "jquery": "^3.7.1",
     "react": "^19.0.0",
+    "react-bootstrap": "^2.10.9",
     "react-data-table-component": "^7.7.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.54.2",

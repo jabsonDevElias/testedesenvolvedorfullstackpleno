@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 //MODELS
 const User = require("../models/User");
 const Tarefas = require("../models/Tarefas");
+const { Op } = require("sequelize");
 
 const generateToken = (user) => {
   return jwt.sign({ email: user.email }, process.env.JWT_SECRET, { expiresIn: "1h" });
@@ -18,21 +19,80 @@ const cadastrausuario = async (req, res) => {
   res.json({ message: "Usuário registrado!" });
 };
 
+// LISTAGEM DE TAREFAS
+
 const listarTarefas = async (req, res) => {
   try {
-    const tarefas = await Tarefas.findAll();
+    const { id } = req.body;
+
+    if (id) {
+      const tarefa = await Tarefas.findByPk(id);
+
+      if (!tarefa) {
+        return res.status(404).json({ message: "Tarefa não encontrada" });
+      }
+
+      return res.json(tarefa);
+    }
+
+    const tarefas = await Tarefas.findAll({
+      where: { status: { [Op.ne]: "inativo" } }
+    });
     res.json(tarefas);
+
   } catch (error) {
-    console.error('Erro ao listar tarefas:', error);
-    res.status(500).json({ message: 'Erro ao listar tarefas' });
+    console.error("Erro ao listar tarefas:", error);
+    res.status(500).json({ message: "Erro ao listar tarefas" });
   }
 };
 
-// const teste = async (req, res) => {
-//    res.send("<h1>Teste de servidor</h1>");
-// }
+// CADASTRO DE TAREFAS
 
-// Login
+const cadastraTarefas = async (req, res) => {
+  const { descricao,nome,id} = req.body;
+  const idUser = 2;
+  const status = "pendente";
+  if(id > 0){
+    const tarefa = await Tarefas.findByPk(id);
+    await tarefa.update({ nome,descricao,status });
+    res.json({ message: "Tarefa Atualizada!" });
+  }else{
+    const novaTarefa= await Tarefas.create({ nome,descricao,idUser,status });
+    res.json({ message: "Tarefa registrada!" });
+  }  
+};
+
+// FINALIZAR DE TAREFAS
+
+const finalizarTarefas = async (req, res) => {
+  const {id} = req.body;
+  const status = "concluída";
+
+  if(id > 0){
+    const tarefa = await Tarefas.findByPk(id);
+    await tarefa.update({ status });
+    res.json({ message: "Tarefa Finalizada!" });
+  }else{
+    res.json({ message: "Não foi encontrado ID!" });
+  }  
+};
+
+// EXCLUIR TAREFAS
+
+const excluirTarefas = async (req, res) => {
+  const {id} = req.body;
+  const status = "inativo";
+
+  if(id > 0){
+    const tarefa = await Tarefas.findByPk(id);
+    await tarefa.update({ status });
+    res.json({ message: "Tarefa Excluida!" });
+  }else{
+    res.json({ message: "Não foi encontrado ID!" });
+  }  
+};
+
+// LOGIN
 const login = async (req, res) => {
   const { email, password } = req.body;
 
@@ -58,4 +118,4 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { cadastrausuario, login,listarTarefas};
+module.exports = { cadastrausuario, login, listarTarefas, cadastraTarefas,finalizarTarefas,excluirTarefas};

@@ -1,50 +1,29 @@
-
-import Login from './pages/Login';
-import { BrowserRouter as Router, Routes, Route} from "react-router-dom";
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 //PAGES
-import Home from "./pages/Home";
+import Login from "./pages/Login";
 import CadastraUsuario from "./pages/CadastraUsuario";
-import Tarefas from './pages/Tarefas';
+import Tarefas from "./pages/Tarefas";
+import CadastraTarefas from "./pages/CadastraTarefas";
 
-import { useEffect, useState } from 'react';
+//AUTENTICAÇÃO
+import PrivateRoute from "./components/PrivateRoute";
 
+const App: React.FC = () => {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/cadastrausuario" element={<CadastraUsuario  />} />
+        <Route element={<PrivateRoute />}>
+          <Route path="/home" element={<Tarefas />} />
+          <Route path="/cadastratarefas/:id?" element={<CadastraTarefas />} />
+        </Route>
+        <Route path="*" element={<Login />} />
+      </Routes>
+    </Router>
+  );
+};
 
-function App() {
-  const [token,setToken] = useState();
-
-  useEffect(() => {
-    const tokenLocal:any = localStorage.getItem("authToken");
-    setToken(tokenLocal);
-  }, []);
-
-  if(token){
-
-    return (
-      <>
-        <Router>
-          <Routes>
-            <Route path="/" element={<Home/>} />
-            <Route path="/tarefas" element={<Tarefas/>} />
-          </Routes>
-        </Router>
-      </>
-    )
-
-  }else{
-
-    return (
-      <>
-        <Router>
-          <Routes>
-            <Route path="/" element={<Login/>} />
-            <Route path="/cadastrausuario" element={<CadastraUsuario/>} />
-          </Routes>
-        </Router>
-      </>
-    )
-
-  }
-}
-
-export default App
+export default App;

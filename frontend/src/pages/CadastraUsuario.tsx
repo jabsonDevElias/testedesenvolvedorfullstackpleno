@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 
+
 function CadastraUsuario() {
 
   const [formData, setFormData] = useState({ nome: "", email: "", password: "" });
@@ -14,9 +15,7 @@ function CadastraUsuario() {
     try {
       const response = await axios.post("http://localhost:5000/api/cadastrausuario", formData);
       alert("Usuário cadastrado com sucesso!");
-      console.log(response.data);
     } catch (error: any) {
-      console.log(error);
       console.error("Erro ao cadastrar usuário:", error.response?.data || error.message);
       alert("Erro ao cadastrar usuário!");
     }

@@ -4,7 +4,9 @@
   box-sizing: border-box;
 }
 
-#DataTables_Table_0_wrapper{
-  width: 90%;
-  margin: auto;
+.dt-layout-start,.dt-layout-end{
+  padding: 0 2%!important;
 }
+/* #DataTables_Table_0_wrapper{
+
+} */
