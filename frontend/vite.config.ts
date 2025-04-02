@@ -7,4 +7,9 @@ export default defineConfig({
   optimizeDeps: {
     include: ['datatables.net', 'datatables.net-dt'],
   },
+  server: {
+    host: true,
+    port: 5173,
+    strictPort: true,
+  }
 })
