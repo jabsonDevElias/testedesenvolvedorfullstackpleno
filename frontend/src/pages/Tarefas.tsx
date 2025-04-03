@@ -50,6 +50,7 @@ function Tarefas() {
         localStorage.removeItem("authNome");
         localStorage.removeItem("authId");
         navigate("/login");
+        window.location.reload();
     };
 
     const atualizarTabela = (dados: any[]) => {
@@ -58,8 +59,7 @@ function Tarefas() {
         const dadosFormatados = dadosFiltrados.map((item: any) => [
             item.id,
             item.nome,
-            `<span class='badge ${(item.status === 'concluída') ? "text-bg-success" : "text-bg-warning"}'>${item.status}</span>`,
-            `<a href='/cadastratarefas/${item.id}' class='btn btn-primary btn-sm'>Editar</a>`
+            `<span class='badge ${(item.status === 'concluída') ? "text-bg-success" : "text-bg-warning"}'>${item.status}</span>`
         ]);
 
         setTableData(dadosFormatados);
@@ -145,6 +145,7 @@ function Tarefas() {
                         { title: 'Id' },
                         { title: 'Nome' },
                         { title: 'Status' }
+                        
                     ]}
                     options={options}
                     className="table-responsive table table-hover col-12"
