@@ -3,11 +3,15 @@ import DT from 'datatables.net-bs5';
 import 'datatables.net-select-dt';
 import 'datatables.net-responsive-dt';
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCoffee, faRightToBracket } from "@fortawesome/free-solid-svg-icons";
+
 import Carrossel from '../components/Carrossel';
 
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import api from "../service/api";
+
 
 DataTable.use(DT);
 
@@ -19,16 +23,34 @@ function Tarefas() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        axios.post('http://localhost:5000/api/listartarefas')
+        const token = localStorage.getItem("authToken");
+        const idUsuario =localStorage.getItem("authId");
+
+        if (!token) {
+            navigate("/login");
+            return;
+        }
+
+        api.post('/listartarefas',{idUser:idUsuario})
             .then(response => {
                 setData(response.data);
                 atualizarTabela(response.data);
             })
             .catch(error => {
                 console.error('Erro ao buscar dados da API:', error);
+                if (error.response?.status === 401) {
+                    navigate("/login");
+                }
             });
-            
+
     }, []);
+
+    const handleLogout = () => {
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("authNome");
+        localStorage.removeItem("authId");
+        navigate("/login");
+    };
 
     const atualizarTabela = (dados: any[]) => {
         const dadosFiltrados = statusFiltro ? dados.filter(tarefa => tarefa.status === statusFiltro) : dados;
@@ -49,7 +71,7 @@ function Tarefas() {
 
     const options = {
         language: {
-            emptyTable: "Nenhum dado disponível na tabela",
+            emptyTable: "Sem tarefas...",
             info: "Mostrando de _START_ até _END_ de _TOTAL_ registros",
             infoEmpty: "Mostrando 0 até 0 de 0 registros",
             infoFiltered: "(filtrado de _MAX_ registros no total)",
@@ -89,21 +111,30 @@ function Tarefas() {
     return (
         <div className="col-12 d-flex flex-wrap justify-content-between pt-2 pb-2">
             <div className="col-10 m-auto mt-2 mb-2 d-flex justify-content-end flex-wrap">
-            <div className="col-12">
-                <h1>Bem-Vindo, Jabson!</h1>
-            </div>
-            <Carrossel/>
-                <div className="col-12 col-md-3 d-flex justify-content-between mt-5">
-                <select
-                    className="form-select d-inline w-auto"
-                    value={statusFiltro}
-                    onChange={(e) => setStatusFiltro(e.target.value)}
-                >
-                    <option value="">Todos</option>
-                    <option value="pendente">Pendente</option>
-                    <option value="concluída">Concluída</option>
-                </select>
-                <a href='/cadastratarefas' className='btn btn-primary'>Adicionar Tarefa</a>
+                <div className="d-flex flex-wrap col-12 justify-content-between align-items-center mt-2 mb-2">
+                    <div className="col-12 col-md-11">
+                        <h1>{`Bem-Vindo, ${localStorage.getItem("authNome")}`}</h1>
+                    </div>
+                    <div className="col-12 col-md-1 text-center text-md-end">
+                        <button className="btn btn-danger" onClick={handleLogout}>
+                            <FontAwesomeIcon icon={faRightToBracket} size='1x' />
+                        </button>
+                    </div>
+                </div>
+                <Carrossel />
+                <div className="col-12 col-md-4 d-flex flex-wrap justify-content-between mt-5">
+                    <div className="col-12 col-md-5 mb-2 mb-md-0 ">
+                    <select
+                        className="form-select"
+                        value={statusFiltro}
+                        onChange={(e) => setStatusFiltro(e.target.value)}
+                    >
+                        <option value="">Todos</option>
+                        <option value="pendente">Pendente</option>
+                        <option value="concluída">Concluída</option>
+                    </select>
+                    </div>
+                    <a href='/cadastratarefas' className='btn btn-primary col-12 col-md-6'>Adicionar +</a>
                 </div>
             </div>
 

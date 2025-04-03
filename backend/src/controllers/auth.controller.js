@@ -16,14 +16,14 @@ const cadastrausuario = async (req, res) => {
   const { email, password,nome } = req.body;
   const hashedPassword = await bcrypt.hash(password, 10);
   const novoUsuario = await User.create({ nome,email,password: hashedPassword });
-  res.json({ message: "Usuário registrado!" });
+  res.json({ message: "Usuário registrado com Sucesso!" });
 };
 
 // LISTAGEM DE TAREFAS
 
 const listarTarefas = async (req, res) => {
   try {
-    const { id } = req.body;
+    const { id,idUser } = req.body;
 
     if (id) {
       const tarefa = await Tarefas.findByPk(id);
@@ -36,7 +36,7 @@ const listarTarefas = async (req, res) => {
     }
 
     const tarefas = await Tarefas.findAll({
-      where: { status: { [Op.ne]: "inativo" } }
+      where: { status: { [Op.ne]: "inativo" },idUser: idUser}
     });
     res.json(tarefas);
 
@@ -49,16 +49,16 @@ const listarTarefas = async (req, res) => {
 // CADASTRO DE TAREFAS
 
 const cadastraTarefas = async (req, res) => {
-  const { descricao,nome,id} = req.body;
-  const idUser = 2;
+
+  const {descricao,nome,id,idUser} = req.body;
   const status = "pendente";
-  if(id > 0){
+  if(id){
     const tarefa = await Tarefas.findByPk(id);
     await tarefa.update({ nome,descricao,status });
-    res.json({ message: "Tarefa Atualizada!" });
+    res.json({ message: "Tarefa Atualizada com Sucesso!" });
   }else{
     const novaTarefa= await Tarefas.create({ nome,descricao,idUser,status });
-    res.json({ message: "Tarefa registrada!" });
+    res.json({ message: "Tarefa registrada com Sucesso!" });
   }  
 };
 
@@ -71,7 +71,7 @@ const finalizarTarefas = async (req, res) => {
   if(id > 0){
     const tarefa = await Tarefas.findByPk(id);
     await tarefa.update({ status });
-    res.json({ message: "Tarefa Finalizada!" });
+    res.json({ message: "Tarefa Finalizada com Sucesso!" });
   }else{
     res.json({ message: "Não foi encontrado ID!" });
   }  
@@ -111,7 +111,7 @@ const login = async (req, res) => {
 
     const token = generateToken(user);
 
-    res.json({ token, user: { id: user.id, email: user.email } });
+    res.json({ token, user: { id: user.id, email: user.email,nome: user.nome } });
   } catch (error) {
     console.error("Erro no login:", error);
     res.status(500).json({ message: "Erro interno do servidor" });

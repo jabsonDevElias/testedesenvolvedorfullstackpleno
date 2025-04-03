@@ -25,8 +25,12 @@ const Login: React.FC = () => {
       const response = await axios.post("http://localhost:5000/api/login", data);
       const token = response.data.token;
 
+      console.log(response.data);
+
       if (token) {
         localStorage.setItem("authToken", token);
+        localStorage.setItem("authNome", response.data.user.nome);
+        localStorage.setItem("authId", response.data.user.id);
         navigate("/home");
       }
     } catch (error) {
@@ -36,7 +40,7 @@ const Login: React.FC = () => {
 
   return (
     <div className="container">
-      <form onSubmit={handleSubmit(onSubmit)} className="col-md-6 mx-auto">
+      <form onSubmit={handleSubmit(onSubmit)} className="col-md-6 mx-auto border p-2 mt-5 rounded rounded-2">
         <h1 className="text-center">Login</h1>
 
         {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
@@ -61,8 +65,8 @@ const Login: React.FC = () => {
           {errors.password && <p className="text-danger">{errors.password.message}</p>}
         </div>
        
-       <div className="col-12">
-         <a href="/cadastrausuario">Cadastrar Usuário</a>
+       <div className="col-12 mb-3">
+         <a href="/cadastrausuario" className="text-decoration-none ">Cadastrar Usuário</a>
        </div>
         <div className="text-center">
           <button type="submit" className="btn btn-primary w-100" disabled={isSubmitting}>
